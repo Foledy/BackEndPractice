@@ -1,35 +1,24 @@
 class Notifier {
-    value;
     constructor(observerValue) {
-        value = observerValue;
+        this.value = observerValue ?? null;
     }
 
-    subcribers = [];
+    subcribers = new Map();
 
-    subcribe(callback) {
-        if (typeof callback !== "function" || this.subcribers.includes(callback)) {
+    subcribe(sub, callback) {
+        if (typeof sub !== "object" || typeof callback !== "function" || this.subcribers.has(callback[[Scope]])) {
             return;
         }
 
-        this.subcribers.push(callback);
-        callback(value)
+        callback.call(sub, this.value);
+        this.subcribers.set(sub, callback.bind(sub));
     }
 
-    unsubscribe(callback) {
-        if (!this.subcribers.includes(callback)) {
-            return;
-        }
-
-        this.subcribers = this.subcribers.filter(v => v !== callback);
+    unsubscribe(sub) {
+            this.subcribers = this.subcribers.has(sub) ? this.subcribers.filter(v => v !== sub) : this.subcribers;
     }
 
     trigger(payload) {
-        if (this.subcribers.length === 0) {
-            return;
-        }
-
-        for (const callback of this.subcribers) {
-            callback(payload);
-        }
+        this.subcribers.forEach((callback) => callback(payload));
     }
 }
