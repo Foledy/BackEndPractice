@@ -1,4 +1,9 @@
 class Notifier {
+    value;
+    constructor(observerValue) {
+        value = observerValue;
+    }
+
     subcribers = [];
 
     subcribe(callback) {
@@ -7,6 +12,7 @@ class Notifier {
         }
 
         this.subcribers.push(callback);
+        callback(value);
     }
 
     unsubscribe(callback) {
@@ -17,7 +23,9 @@ class Notifier {
         this.subcribers = this.subcribers.filter(v => v !== callback);
     }
 
-    trigger(payload) {
+    changeValue(newValue) {
+        value = newValue;
+
         if (this.subcribers.length === 0) {
             return;
         }
