@@ -1,9 +1,13 @@
 const cache = new WeakMap();
 
+// публичная функция для обращения из других мест
 function extern_getStringCount(data) {
     return getStringCount(data);
 }
 
+// приватная функция, которая используется только методом 'extern_getStringCount'
+// функция собирает все ссылки, которые присутствуют в текущем запросе, и если ссылка присутствует,
+// то возвращает '0', т.е н е обрабатывает сам объект в целом, т.к он был ранее обработан в текущем вызове
 function getStringCount(data, alreadyUsed = []) {
     if (data === null || alreadyUsed.includes(data)) {
         return 0;
